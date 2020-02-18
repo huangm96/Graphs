@@ -10,7 +10,7 @@ Suppose we have some input data describing a graph of relationships between pare
 For example, in this diagram and the sample input, 3 is a child of 1 and 2, and 5 is a child of 4:
 
 ```
- 10
+ 10 
  /
 1   2   4  11
  \ /   / \ /
