@@ -66,23 +66,29 @@ class Graph:
         beginning from starting_vertex.
         """
         # Create an empty stack
-        s= Stack()
-        # Add the starting vertex_id to the stack
+        s = Stack()
+        # Push the starting vertex_id to the stack
         s.push(starting_vertex)
         # Create an empty set to store visited nodes
-        visited=set()
-        # While the stack is not empty
-        while s.size()>0:
-            # pop, the last vertex
+        visited = set()
+        # While the stack is not empty...
+        while s.size() > 0:
+            # Pop the first vertex
             v = s.pop()
-            # check if it is been visited
+            # Check if it's been visited
+            # If it has not been visited...
             if v not in visited:
+                # Mark it as visited
                 print(v)
-                # Makr it as visited
                 visited.add(v)
-                # Then add all neighbors to the back of the stack
+                # Then push all neighbors to the top of the stack
                 for neighbor in self.get_neighbors(v):
                     s.push(neighbor)
+
+    def add_to_visited(self, item=None, visited=set()):
+        if item is not None:
+            visited.add(item)
+        return visited
 
     def dft_recursive(self, starting_vertex):
         """
@@ -91,7 +97,20 @@ class Graph:
 
         This should be done using recursion.
         """
-        # 
+        # Check if the node is visited
+        visited = self.add_to_visited()
+        # Hint: https://docs.python-guide.org/writing/gotchas/
+        # If not...
+        
+        if starting_vertex not in visited:
+            # Print
+            print(starting_vertex)
+            # Mark it as visited
+            self.add_to_visited(starting_vertex)
+            for neighbor in self.get_neighbors(starting_vertex):
+                # Call DFT_Recursive on each child
+                self.dft_recursive(neighbor)
+        
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -162,7 +181,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 5, 6
     '''
     graph.bft(1)
-
+    print("-------------------")
     '''
     Valid DFT paths:
         1, 2, 3, 5, 4, 6, 7
@@ -171,13 +190,17 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     graph.dft(1)
+    print("-------------------")
+
     graph.dft_recursive(1)
+    print("-------------------")
 
     '''
     Valid BFS path:
         [1, 2, 4, 6]
     '''
     print(graph.bfs(1, 6))
+    print("-------------------")
 
     '''
     Valid DFS paths:
@@ -185,4 +208,7 @@ if __name__ == '__main__':
         [1, 2, 4, 7, 6]
     '''
     print(graph.dfs(1, 6))
+    print("-------------------")
+
     print(graph.dfs_recursive(1, 6))
+    print("-------------------")
