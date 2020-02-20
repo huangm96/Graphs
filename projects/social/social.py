@@ -60,9 +60,7 @@ class SocialGraph:
                 possible_friendships.append((user_id, friend_id))
         # Shuffle the list
         random.shuffle(possible_friendships)
-        print("----")
-        print(possible_friendships)
-        print("----")
+
         # Grab the first total_friendship pairs from the list and create those friendships
         for i in range(num_users * avg_friendships // 2):
             friendship = possible_friendships[i]
@@ -82,26 +80,24 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
-        # user_id is the target
-        # loop through all users, to see if they can reach the target
-        for user in self.users:
 
-            q = [[user]]
-            storage = set()
-            while len(q) > 0:
-                path = q[0]
-                q.remove(path)
-                path_last = path[-1]
-                if path_last == user_id:
-                    visited[user] = path
-                    break
-                else:
-                    if path_last not in storage:
-                        storage.add(path_last)
-                        for neighbor in self.friendships[path_last]:
-                            new_path = path.copy()
-                            new_path.append(neighbor)
-                            q.append(new_path)
+        # add a path to the queue list
+        q = [[user_id]]
+        # While the queue is not empty...
+        while len(q) > 0:
+            # get the first path
+            path = q.pop(0)
+            # get the last element from the path
+            path_last = path[-1]
+            
+            if path_last not in visited:
+                visited[path_last] = path
+                # add the friends of the user to the new path
+                for neighbor in self.friendships[path_last]:
+                    new_path = path.copy()
+                    new_path.append(neighbor)
+                    # add to queue
+                    q.append(new_path)
 
 
         
@@ -116,3 +112,19 @@ if __name__ == '__main__':
     print(sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
+
+
+    #Q1 
+    # nums = num_users * avg_friendships // 2
+    nums = 100 * 10 // 2
+    print(f"Times would you need to call add_friendship(): {nums}")
+
+    # Q2
+    sg = SocialGraph()
+    sg.populate_graph(1000, 5)
+    connections = sg.get_all_social_paths(1)
+    print(len(connections))
+    total = 0
+    for connection in connections:
+        total += len(connections[connection])
+    print(total / len(connections) - 1)
