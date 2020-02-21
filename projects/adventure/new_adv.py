@@ -18,7 +18,7 @@ world = World()
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
-room_graph=literal_eval(open(map_file, "r").read())
+room_graph = literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
@@ -41,7 +41,7 @@ repeat until the explored room num reach the num of the room
 '''
 # dfs
 # Create an empty stack
-stack=[]
+stack = []
 # Add the starting room to the stack
 stack.append(world.starting_room)
 print("start", stack)
@@ -55,23 +55,24 @@ while len(stack) > 0:
     # If it has not been visited...
     if room not in visited:
         # Mark it as visited
-        print("stack",room.name)
+        print("stack", room.name)
         visited.add(room)
         # check if its neighbors have been visited
         # if not, go to one of the directions
-    if room.n_to and room.n_to not in visited:
-        traversal_path.append("n")
-        stack.append(room.n_to)
+        
+    if room.w_to and room.w_to not in visited:
+        traversal_path.append("w")
+        stack.append(room.w_to)
     elif room.s_to and room.s_to not in visited:
         traversal_path.append("s")
         stack.append(room.s_to)
-    elif room.w_to and room.w_to not in visited:
-        traversal_path.append("w")
-        stack.append(room.w_to)
+    elif room.n_to and room.n_to not in visited:
+        traversal_path.append("n")
+        stack.append(room.n_to)
     elif room.e_to and room.e_to not in visited:
         traversal_path.append("e")
         stack.append(room.e_to)
-    
+
     elif len(visited) == len(room_graph):
         break
 
@@ -95,7 +96,7 @@ while len(stack) > 0:
                 traversal_path.extend(path)
                 stack.append(visited_room)
             else:
-                
+
                 # add neighbor to the queue
                 if visited_room.n_to:
                     new_path = path.copy()
@@ -117,23 +118,23 @@ while len(stack) > 0:
                     new_path.append("e")
                     paths.append(new_path)
                     queue.append(visited_room.e_to)
-            
-  
+
+
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
 visited_rooms.add(player.current_room)
-print("traversal_path",traversal_path)
+print("traversal_path", traversal_path)
 for move in traversal_path:
     player.travel(move)
     visited_rooms.add(player.current_room)
 
 if len(visited_rooms) == len(room_graph):
-    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+    print(
+        f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
-
 
 
 #######
