@@ -46,32 +46,102 @@ stack = []
 stack.append(world.starting_room)
 print("start", stack)
 # Create an empty set to store visited nodes
-visited = set()
+visited = dict()
 # While the stack is not empty...
 while len(stack) > 0:
     # pop, the first room
     room = stack.pop()
     # Check if it's been visited
     # If it has not been visited...
-    if room not in visited:
+    if room.id not in visited:
         # Mark it as visited
         print("stack", room.name)
-        visited.add(room)
+        visited[room.id] = dict()
+        if room.w_to is not None:
+            visited[room.id]["w"] = "?"
+        if room.n_to is not None:
+            visited[room.id]["n"] = "?"
+        if room.s_to is not None:
+            visited[room.id]["s"] = "?"
+        if room.e_to is not None:
+            visited[room.id]["e"] = "?"
         # check if its neighbors have been visited
         # if not, go to one of the directions
-        
-    if room.w_to and room.w_to not in visited:
+    if room.w_to and visited[room.id]["w"] == "?":
         traversal_path.append("w")
         stack.append(room.w_to)
-    elif room.s_to and room.s_to not in visited:
+        visited[room.id]["w"] = room.w_to.id
+        if room.w_to.id not in visited:
+            visited[room.w_to.id] = dict()
+            if room.w_to.w_to is not None:
+                visited[room.w_to.id]["w"] = "?"
+            if room.w_to.n_to is not None:
+                visited[room.w_to.id]["n"] = "?"
+            if room.w_to.s_to is not None:
+                visited[room.w_to.id]["s"] = "?"
+            if room.w_to.e_to is not None:
+                visited[room.w_to.id]["e"] = "?"
+            visited[room.w_to.id]["e"] = room.id
+        else:
+            visited[room.w_to.id]["e"] = room.id
+            
+    elif room.s_to and visited[room.id]["s"] == "?":
+        
         traversal_path.append("s")
         stack.append(room.s_to)
-    elif room.n_to and room.n_to not in visited:
+        visited[room.id]["s"] = room.s_to.id
+        if room.s_to.id not in visited:
+            visited[room.s_to.id] = dict()
+            if room.s_to.w_to is not None:
+                visited[room.s_to.id]["w"] = "?"
+            if room.s_to.n_to is not None:
+                visited[room.s_to.id]["n"] = "?"
+            if room.s_to.s_to is not None:
+                visited[room.s_to.id]["s"] = "?"
+            if room.s_to.e_to is not None:
+                visited[room.s_to.id]["e"] = "?"
+            visited[room.s_to.id]["n"] = room.id
+        else:
+            visited[room.s_to.id]["n"] = room.id
+
+    elif room.n_to and visited[room.id]["n"] == "?":
+
         traversal_path.append("n")
         stack.append(room.n_to)
-    elif room.e_to and room.e_to not in visited:
+        visited[room.id]["n"] = room.n_to.id
+        
+        if room.n_to.id not in visited:
+            visited[room.n_to.id] = dict()
+            if room.n_to.w_to is not None:
+                visited[room.n_to.id]["w"] = "?"
+            if room.n_to.n_to is not None:
+                visited[room.n_to.id]["n"] = "?"
+            if room.n_to.s_to is not None:
+                visited[room.n_to.id]["s"] = "?"
+            if room.n_to.e_to is not None:
+                visited[room.n_to.id]["e"] = "?"
+            visited[room.n_to.id]["s"] = room.id
+        else:
+            visited[room.n_to.id]["s"] = room.id
+    elif room.e_to and visited[room.id]["e"] == "?":
+
         traversal_path.append("e")
         stack.append(room.e_to)
+        visited[room.id]["e"] = room.e_to.id
+
+        if room.e_to.id not in visited:
+            visited[room.e_to.id] = dict()
+            if room.e_to.w_to is not None:
+                visited[room.e_to.id]["w"] = "?"
+            if room.e_to.n_to is not None:
+                visited[room.e_to.id]["n"] = "?"
+            if room.e_to.s_to is not None:
+                visited[room.e_to.id]["s"] = "?"
+            if room.e_to.e_to is not None:
+                visited[room.e_to.id]["e"] = "?"
+            visited[room.e_to.id]["w"] = room.id
+        else:
+            visited[room.e_to.id]["w"] = room.id
 
     elif len(visited) == len(room_graph):
         break
@@ -90,7 +160,7 @@ while len(stack) > 0:
             visited_room = queue.pop(0)
             path = paths.pop(0)
             # check this visited_room to see if it has unexplored neighbor
-            if (visited_room.n_to and visited_room.n_to not in visited) or (visited_room.s_to and visited_room.s_to not in visited) or (visited_room.w_to and visited_room.w_to not in visited) or (visited_room.e_to and visited_room.e_to not in visited):
+            if (visited_room.n_to and visited[visited_room.id]["n"] == '?') or (visited_room.s_to and visited[visited_room.id]["s"] == '?') or (visited_room.w_to and visited[visited_room.id]["w"] == '?') or (visited_room.e_to and visited[visited_room.id]["e"] == '?'):
                 print("queue", visited_room.name)
                 queue.clear()
                 traversal_path.extend(path)
@@ -118,7 +188,7 @@ while len(stack) > 0:
                     new_path.append("e")
                     paths.append(new_path)
                     queue.append(visited_room.e_to)
-
+print(visited)
 
 # TRAVERSAL TEST
 visited_rooms = set()
@@ -140,12 +210,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
